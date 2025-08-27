@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Exception;
 use OpenAI;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class Overpass
@@ -92,7 +91,7 @@ class Overpass
                 '/usr/local/bin/python3',
                 '/usr/bin/python3',
             ];
-            
+
             $pythonPath = 'python3'; // default fallback
             foreach ($pythonPaths as $path) {
                 if (file_exists($path)) {
@@ -100,7 +99,7 @@ class Overpass
                     break;
                 }
             }
-            
+
             $process = new Process([
                 $pythonPath,
                 $this->scriptPath,
@@ -113,7 +112,7 @@ class Overpass
                 'PATH' => getenv('PATH') ?: '/usr/bin:/bin:/usr/local/bin:/opt/anaconda3/bin',
             ]);
             $process->setEnv($env);
-            
+
             $process->setTimeout($this->timeout);
             $process->run();
 

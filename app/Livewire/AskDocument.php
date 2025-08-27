@@ -78,7 +78,7 @@ class AskDocument extends Component
                 // Get full chunk content
                 $chunkIds = array_column($topChunks, 'chunk_id');
                 $chunks = Chunk::whereIn('id', $chunkIds)->get();
-                
+
                 // Sort chunks to match the order of topChunks
                 $chunksById = $chunks->keyBy('id');
                 $orderedChunks = collect();
