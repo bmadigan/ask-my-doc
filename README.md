@@ -18,7 +18,7 @@ A sophisticated document question-answering application built with Laravel, Live
 - **Backend**: Laravel 12, PHP 8.4
 - **Frontend**: Livewire 3, Tailwind CSS 4
 - **Database**: SQLite with vector storage
-- **AI Bridge**: Custom Overpass service (inspired by [bmadigan/overpass](https://github.com/bmadigan/overpass))
+- **AI Bridge**: [bmadigan/overpass](https://github.com/bmadigan/overpass) package via Composer
 - **Embeddings**: OpenAI text-embedding-3-small
 - **Chat**: OpenAI GPT-4o-mini
 - **Python**: Vector similarity search with NumPy
@@ -28,7 +28,7 @@ A sophisticated document question-answering application built with Laravel, Live
 - PHP 8.2+
 - Composer
 - Node.js & NPM
-- Python 3.10+
+- Python 3.9+ with pip
 - OpenAI API key
 
 ## 🚀 Installation
@@ -40,7 +40,7 @@ A sophisticated document question-answering application built with Laravel, Live
 git clone <your-repo-url>
 cd overpass-test
 
-# Install PHP dependencies
+# Install PHP dependencies (includes bmadigan/overpass package)
 composer install
 
 # Install Node dependencies
@@ -123,11 +123,12 @@ Visit http://localhost:8000
 
 ## 🏗 Architecture
 
-### Overpass Service
-Custom implementation inspired by [bmadigan/overpass](https://github.com/bmadigan/overpass) providing:
+### Overpass Package
+Using the [bmadigan/overpass](https://github.com/bmadigan/overpass) package providing:
 - OpenAI integration for embeddings and chat
 - Python bridge for vector operations
 - SQLite vector search with cosine similarity
+- Graceful error handling and fallback responses
 
 ### Database Schema
 - `documents`: Stores document metadata
@@ -137,8 +138,11 @@ Custom implementation inspired by [bmadigan/overpass](https://github.com/bmadiga
 ### Python Bridge
 Located in `overpass-ai/main.py`:
 - `health_check`: Service status verification
+- `create_embeddings`: Generate OpenAI embeddings for text
+- `chat_query`: Process chat completions through OpenAI
 - `sqlite_search`: Vector similarity search with scoring
 - `vector_search`: Generic vector operations
+- `analyze_data`: AI-powered data analysis
 
 ## 🎨 UI Design
 
@@ -214,17 +218,18 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 🙏 Credits
 
 - UI design inspired by [Linear](https://linear.app)
-- Original Overpass concept by [bmadigan/overpass](https://github.com/bmadigan/overpass)
+- Powered by [bmadigan/overpass](https://github.com/bmadigan/overpass) package
 - Built with [Laravel](https://laravel.com) and [Livewire](https://livewire.laravel.com)
 
 ## 🐛 Troubleshooting
 
 ### Python Bridge Error
 If you see "Python: error" in the status card:
-1. Ensure Python 3.10+ is installed
-2. Check Python dependencies: `pip3 list | grep -E "openai|numpy"`
-3. Verify script path in `.env`
-4. Test directly: `python3 overpass-ai/main.py '{"operation":"health_check","payload":{}}'`
+1. Ensure Python 3.9+ is installed
+2. Install Python dependencies: `pip3 install numpy openai python-dotenv`
+3. Check dependencies: `pip3 list | grep -E "openai|numpy|dotenv"`
+4. Verify script path in `.env`
+5. Test directly: `python3 overpass-ai/main.py health_check '[]'`
 
 ### OpenAI Connection Issues
 1. Verify API key is set correctly in `.env`
@@ -242,4 +247,4 @@ For more information about the technologies used:
 - [Laravel Documentation](https://laravel.com/docs)
 - [Livewire Documentation](https://livewire.laravel.com/docs)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
-- [Overpass Inspiration](https://github.com/bmadigan/overpass)
+- [Overpass Package](https://github.com/bmadigan/overpass)
