@@ -1,0 +1,19 @@
+name: Packagist Auto-Update
+
+on:
+  push:
+    branches: [ "main" ]
+  release:
+    types: [published, edited]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Packagist
+        run: |
+          curl -sS -X POST \
+            -H 'Content-Type: application/json' \
+            -H "Authorization: Bearer ${{ secrets.PACKAGIST_USERNAME }}:${{ secrets.PACKAGIST_TOKEN }}" \
+            https://packagist.org/api/update-package \
+            -d '{"repository":"https://github.com/bmadigan/overpass"}'
