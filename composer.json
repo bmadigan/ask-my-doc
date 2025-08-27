@@ -12,7 +12,8 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "livewire/livewire": "^3.6"
+        "livewire/livewire": "^3.6",
+        "openai-php/client": "^0.16.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
