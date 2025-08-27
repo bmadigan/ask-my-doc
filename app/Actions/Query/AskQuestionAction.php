@@ -5,14 +5,14 @@ namespace App\Actions\Query;
 use App\Models\Chunk;
 use App\Models\Document;
 use App\Models\Query;
-use App\Services\Overpass;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Illuminate\Support\Collection;
 
 class AskQuestionAction
 {
-    protected Overpass $overpass;
+    protected PythonAiBridge $overpass;
 
-    public function __construct(Overpass $overpass)
+    public function __construct(PythonAiBridge $overpass)
     {
         $this->overpass = $overpass;
     }
@@ -35,7 +35,8 @@ class AskQuestionAction
             $searchResults = [];
         } else {
             // Generate embedding for the question
-            $questionEmbedding = $this->overpass->generateEmbedding($data['question']);
+            $embeddingResult = $this->overpass->generateEmbedding($data['question']);
+            $questionEmbedding = $embeddingResult['embedding'];
 
             // Calculate similarity scores for each chunk
             $searchResults = [];
@@ -145,7 +146,14 @@ class AskQuestionAction
             ],
         ];
 
-        return $this->overpass->chat($messages);
+        $chatData = [
+            'message' => $question,
+            'messages' => $messages,
+            'session_id' => uniqid('query_'),
+        ];
+        $result = $this->overpass->chat($chatData);
+
+        return $result['response'];
     }
 
     protected function cosineSimilarity(array $vec1, array $vec2): float

@@ -3,7 +3,7 @@
 use App\Actions\Document\IngestDocumentAction;
 use App\Models\Chunk;
 use App\Models\Document;
-use App\Services\Overpass;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\mock;
@@ -12,9 +12,13 @@ uses(RefreshDatabase::class);
 
 it('creates a document with chunks', function () {
     // Mock the Overpass service
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -31,9 +35,13 @@ it('creates a document with chunks', function () {
 });
 
 it('handles different chunk sizes', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -59,9 +67,13 @@ it('handles different chunk sizes', function () {
 });
 
 it('stores original filename when provided', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -77,9 +89,13 @@ it('stores original filename when provided', function () {
 });
 
 it('calculates document bytes correctly', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -98,9 +114,13 @@ it('calculates document bytes correctly', function () {
 it('creates chunks with embeddings', function () {
     $mockEmbedding = array_fill(0, 1536, 0.123);
 
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn($mockEmbedding);
+        ->andReturn([
+            'embedding' => $mockEmbedding,
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -120,9 +140,13 @@ it('creates chunks with embeddings', function () {
 });
 
 it('handles overlap correctly', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -150,7 +174,7 @@ it('handles overlap correctly', function () {
 });
 
 it('rolls back transaction on failure', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
         ->andThrow(new Exception('API Error'));
 
@@ -172,9 +196,13 @@ it('rolls back transaction on failure', function () {
 });
 
 it('estimates token count', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 
@@ -193,9 +221,13 @@ it('estimates token count', function () {
 });
 
 it('filters out empty chunks', function () {
-    $mockOverpass = mock(Overpass::class);
+    $mockOverpass = mock(PythonAiBridge::class);
     $mockOverpass->shouldReceive('generateEmbedding')
-        ->andReturn(array_fill(0, 1536, 0.1));
+        ->andReturn([
+            'embedding' => array_fill(0, 1536, 0.1),
+            'model' => 'text-embedding-3-small',
+            'dimension' => 1536,
+        ]);
 
     $action = new IngestDocumentAction($mockOverpass);
 

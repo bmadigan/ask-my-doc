@@ -4,14 +4,14 @@ namespace App\Actions\Document;
 
 use App\Models\Chunk;
 use App\Models\Document;
-use App\Services\Overpass;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Illuminate\Support\Facades\DB;
 
 class IngestDocumentAction
 {
-    protected Overpass $overpass;
+    protected PythonAiBridge $overpass;
 
-    public function __construct(Overpass $overpass)
+    public function __construct(PythonAiBridge $overpass)
     {
         $this->overpass = $overpass;
     }
@@ -35,7 +35,8 @@ class IngestDocumentAction
 
             // Generate embeddings and save chunks
             foreach ($chunks as $index => $chunkContent) {
-                $embedding = $this->overpass->generateEmbedding($chunkContent);
+                $embeddingResult = $this->overpass->generateEmbedding($chunkContent);
+                $embedding = $embeddingResult['embedding'];
 
                 Chunk::create([
                     'document_id' => $document->id,

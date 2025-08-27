@@ -4,8 +4,88 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ea734624f86489087fe5319e978b50a",
+    "content-hash": "9cdf7f81ca1f07aae0655ae3fdaf0aae",
     "packages": [
+        {
+            "name": "bmadigan/overpass",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bmadigan/overpass.git",
+                "reference": "64fe6b06509908f1551371f013576248c232a270"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bmadigan/overpass/zipball/64fe6b06509908f1551371f013576248c232a270",
+                "reference": "64fe6b06509908f1551371f013576248c232a270",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^11.0|^12.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.92",
+                "symfony/process": "^6.0|^7.0"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.6",
+                "laravel/pint": "^1.18",
+                "nunomaduro/collision": "^8.6",
+                "orchestra/testbench": "^10.5",
+                "pestphp/pest": "^3.8",
+                "pestphp/pest-plugin-arch": "^3.8",
+                "pestphp/pest-plugin-laravel": "^3.2",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan-deprecation-rules": "^1.2",
+                "phpstan/phpstan-phpunit": "^1.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Overpass": "Bmadigan\\Overpass\\Facades\\Overpass"
+                    },
+                    "providers": [
+                        "Bmadigan\\Overpass\\OverpassServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bmadigan\\Overpass\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brad Madigan",
+                    "email": "brad@madigan.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A robust Laravel package for integrating Python AI capabilities through a secure subprocess bridge",
+            "homepage": "https://github.com/bmadigan/overpass",
+            "keywords": [
+                "Bridge",
+                "ai",
+                "embedding",
+                "langchain",
+                "laravel",
+                "machine-learning",
+                "openai",
+                "overpass",
+                "python",
+                "subprocess",
+                "vector"
+            ],
+            "support": {
+                "issues": "https://github.com/bmadigan/overpass/issues",
+                "source": "https://github.com/bmadigan/overpass/tree/v1.0.0"
+            },
+            "time": "2025-08-22T16:59:51+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.13.1",
@@ -3575,6 +3655,67 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.0"
             },
             "time": "2025-06-25T14:20:11+00:00"
+        },
+        {
+            "name": "spatie/laravel-package-tools",
+            "version": "1.92.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-package-tools.git",
+                "reference": "f09a799850b1ed765103a4f0b4355006360c49a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/f09a799850b1ed765103a4f0b4355006360c49a5",
+                "reference": "f09a799850b1ed765103a4f0b4355006360c49a5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^9.28|^10.0|^11.0|^12.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^7.7|^8.0|^9.0|^10.0",
+                "pestphp/pest": "^1.23|^2.1|^3.1",
+                "phpunit/php-code-coverage": "^9.0|^10.0|^11.0",
+                "phpunit/phpunit": "^9.5.24|^10.5|^11.5",
+                "spatie/pest-plugin-test-time": "^1.1|^2.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\LaravelPackageTools\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tools for creating Laravel packages",
+            "homepage": "https://github.com/spatie/laravel-package-tools",
+            "keywords": [
+                "laravel-package-tools",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-package-tools/issues",
+                "source": "https://github.com/spatie/laravel-package-tools/tree/1.92.7"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-07-17T15:46:43+00:00"
         },
         {
             "name": "symfony/clock",

@@ -39,13 +39,168 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 def health_check(payload: Dict[str, Any]) -> Dict[str, Any]:
     """Health check to verify Python bridge is working."""
     return {
-        "success": True,
+        "status": "success",
+        "message": "All systems operational",
         "data": {
             "status": "healthy",
             "python_version": sys.version,
             "openai_available": client is not None
         }
     }
+
+def create_embeddings(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Generate embeddings for given texts using OpenAI.
+    
+    Expected payload:
+    - texts: List of texts to generate embeddings for
+    """
+    try:
+        texts = payload.get('texts', [])
+        if not texts:
+            raise ValueError("No texts provided for embedding generation")
+        
+        if not client:
+            raise ValueError("OpenAI client not initialized")
+        
+        # Generate embeddings
+        response = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=texts[0] if len(texts) == 1 else texts
+        )
+        
+        embeddings = []
+        for embedding_data in response.data:
+            # Convert to regular Python list for JSON serialization
+            embedding_list = list(embedding_data.embedding)
+            embeddings.append(embedding_list)
+        
+        return {
+            "success": True,
+            "data": {
+                "embeddings": embeddings,
+                "model": response.model,
+                "usage": response.usage.total_tokens if hasattr(response, 'usage') else None
+            }
+        }
+    
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+def chat_query(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Handle chat queries using OpenAI.
+    
+    Expected payload:
+    - message: The user's message
+    - messages: Optional full message history
+    - session_id: Optional session identifier
+    """
+    try:
+        if not client:
+            raise ValueError("OpenAI client not initialized")
+        
+        messages = payload.get('messages', [])
+        if not messages and payload.get('message'):
+            # If no messages array, create one from the single message
+            messages = [
+                {"role": "user", "content": payload.get('message')}
+            ]
+        
+        if not messages:
+            raise ValueError("No messages provided for chat")
+        
+        # Make chat completion request
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0.3
+        )
+        
+        return {
+            "response": response.choices[0].message.content,
+            "metadata": {
+                "model": response.model,
+                "usage": {
+                    "prompt_tokens": response.usage.prompt_tokens,
+                    "completion_tokens": response.usage.completion_tokens,
+                    "total_tokens": response.usage.total_tokens
+                } if hasattr(response, 'usage') else None
+            }
+        }
+    
+    except Exception as e:
+        return {
+            "response": "I'm experiencing technical difficulties. Please try your question again in a moment.",
+            "error": str(e)
+        }
+
+def search_documents(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Search for documents using vector similarity.
+    
+    Expected payload:
+    - query: The search query
+    - options: Additional search options
+    """
+    try:
+        query = payload.get('query', '')
+        options = payload.get('options', {})
+        
+        if not query:
+            return {
+                "success": True,
+                "data": {
+                    "results": []
+                }
+            }
+        
+        # For now, return empty results as we don't have a vector store
+        # In production, this would search against a vector database
+        return {
+            "success": True,
+            "data": {
+                "results": []
+            }
+        }
+    
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+def analyze_data(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Analyze data using AI capabilities.
+    
+    Expected payload:
+    - data: The data to analyze
+    """
+    try:
+        data = payload.get('data')
+        
+        if not data:
+            raise ValueError("No data provided for analysis")
+        
+        # Placeholder for data analysis
+        # In production, this would use AI to analyze the data
+        return {
+            "success": True,
+            "analysis": "Data analysis completed",
+            "data": {
+                "summary": "Analysis results would appear here"
+            }
+        }
+    
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 def sqlite_search(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -188,14 +343,33 @@ def main():
         sys.exit(1)
     
     try:
-        # Parse input JSON
-        input_data = json.loads(sys.argv[1])
-        operation = input_data.get('operation')
-        payload = input_data.get('payload', {})
+        operation = None
+        payload = {}
+        
+        # Handle two different call formats:
+        # Format 1: operation as first arg, JSON as second
+        # Format 2: JSON with operation inside
+        if len(sys.argv) >= 3:
+            # Format 1: operation is first arg, data is second
+            operation = sys.argv[1]
+            input_data = json.loads(sys.argv[2])
+            payload = input_data if isinstance(input_data, dict) else {}
+        else:
+            # Format 2: Everything in one JSON arg
+            input_data = json.loads(sys.argv[1])
+            if isinstance(input_data, dict):
+                operation = input_data.get('operation')
+                payload = input_data.get('payload', {})
+            else:
+                raise ValueError("Invalid input format")
         
         # Route to appropriate handler
         handlers = {
             'health_check': health_check,
+            'create_embeddings': create_embeddings,
+            'chat_query': chat_query,
+            'search_documents': search_documents,
+            'analyze_data': analyze_data,
             'sqlite_search': sqlite_search,
             'vector_search': vector_search,
         }

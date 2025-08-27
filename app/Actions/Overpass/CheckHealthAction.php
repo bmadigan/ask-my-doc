@@ -2,14 +2,14 @@
 
 namespace App\Actions\Overpass;
 
-use App\Services\Overpass;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Exception;
 
 class CheckHealthAction
 {
-    protected Overpass $overpass;
+    protected PythonAiBridge $overpass;
 
-    public function __construct(Overpass $overpass)
+    public function __construct(PythonAiBridge $overpass)
     {
         $this->overpass = $overpass;
     }
@@ -17,7 +17,15 @@ class CheckHealthAction
     public function execute(): array
     {
         try {
-            return $this->overpass->checkHealth();
+            $result = $this->overpass->testConnection();
+
+            // Transform the result to match expected format
+            return [
+                'success' => $result['status'] !== 'error',
+                'message' => $result['message'] ?? 'Unknown status',
+                'openai' => isset($result['openai']) ? $result['openai'] : 'unknown',
+                'python_bridge' => isset($result['python_bridge']) ? $result['python_bridge'] : ($result['status'] !== 'error' ? 'connected' : 'error'),
+            ];
         } catch (Exception $e) {
             return [
                 'success' => false,

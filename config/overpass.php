@@ -13,11 +13,23 @@ return [
 
     'script_path' => env('OVERPASS_SCRIPT_PATH', base_path('overpass-ai/main.py')),
 
-    'timeout' => env('OVERPASS_TIMEOUT', 60),
+    'timeout' => (int) env('OVERPASS_TIMEOUT', 90),
 
-    'max_output' => env('OVERPASS_MAX_OUTPUT', 1048576), // 1MB
+    'max_output_length' => (int) env('OVERPASS_MAX_OUTPUT', 10000),
 
-    'embedding_model' => env('OVERPASS_EMBEDDING_MODEL', 'text-embedding-3-small'),
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'organization' => env('OPENAI_ORGANIZATION'),
+    ],
 
-    'chat_model' => env('OVERPASS_CHAT_MODEL', 'gpt-4o-mini'),
+    'logging' => [
+        'enabled' => env('OVERPASS_LOGGING', true),
+        'log_channel' => env('OVERPASS_LOG_CHANNEL', 'default'),
+    ],
+
+    'error_handling' => [
+        'fallback_enabled' => env('OVERPASS_FALLBACK_ENABLED', true),
+        'retry_attempts' => env('OVERPASS_RETRY_ATTEMPTS', 3),
+        'retry_delay' => env('OVERPASS_RETRY_DELAY', 1000),
+    ],
 ];
