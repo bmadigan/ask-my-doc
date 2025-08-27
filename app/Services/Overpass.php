@@ -146,4 +146,64 @@ class Overpass
             'k' => $k,
         ]);
     }
+
+    public function checkHealth(): array
+    {
+        $status = [
+            'success' => false,
+            'message' => 'Checking health...',
+            'openai' => 'unknown',
+            'python_bridge' => 'unknown',
+        ];
+
+        // Check OpenAI connection
+        try {
+            $embedding = $this->generateEmbedding('test');
+            if (is_array($embedding) && count($embedding) > 0) {
+                $status['openai'] = 'connected';
+            } else {
+                $status['openai'] = 'error';
+            }
+        } catch (Exception $e) {
+            $status['openai'] = 'error';
+        }
+
+        // Check Python bridge
+        try {
+            $result = $this->executePython('health_check', []);
+            if (isset($result['success']) && $result['success']) {
+                $status['python_bridge'] = 'connected';
+            } else {
+                $status['python_bridge'] = 'error';
+            }
+        } catch (Exception $e) {
+            $status['python_bridge'] = 'error';
+        }
+
+        // Determine overall status
+        if ($status['openai'] === 'connected' && $status['python_bridge'] === 'connected') {
+            $status['success'] = true;
+            $status['message'] = 'All systems operational';
+        } elseif ($status['openai'] === 'connected' || $status['python_bridge'] === 'connected') {
+            $status['success'] = true;
+            $status['message'] = 'Partial connectivity';
+        } else {
+            $status['success'] = false;
+            $status['message'] = 'Connection failed';
+        }
+
+        return $status;
+    }
+
+    public function executePython(string $operation, array $payload): array
+    {
+        return $this->execute($operation, $payload);
+    }
+
+    public function validateEmbedding(array $embedding): void
+    {
+        if (count($embedding) !== 1536) {
+            throw new \InvalidArgumentException('Embedding must have exactly 1536 dimensions');
+        }
+    }
 }

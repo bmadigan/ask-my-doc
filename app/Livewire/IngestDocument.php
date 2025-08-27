@@ -2,10 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Facades\Overpass;
-use App\Models\Chunk;
-use App\Models\Document;
-use Illuminate\Support\Facades\DB;
+use App\Actions\Document\IngestDocumentAction;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -61,36 +58,17 @@ class IngestDocument extends Component
         $startTime = microtime(true);
 
         try {
-            DB::beginTransaction();
+            $action = app(IngestDocumentAction::class);
 
-            // Create document
-            $document = Document::create([
+            $document = $action->execute([
                 'title' => $this->title,
-                'bytes' => strlen($this->content),
+                'content' => $this->content,
                 'original_filename' => $this->file ? $this->file->getClientOriginalName() : null,
+                'chunk_size' => $this->chunkSize,
+                'overlap_size' => $this->overlapSize,
             ]);
 
-            // Chunk the content
-            $chunks = $this->createChunks($this->content);
-            $this->chunkCount = count($chunks);
-
-            // Process each chunk
-            foreach ($chunks as $index => $chunkText) {
-                // Generate embedding
-                $embedding = Overpass::generateEmbedding($chunkText);
-
-                // Store chunk
-                Chunk::create([
-                    'document_id' => $document->id,
-                    'chunk_index' => $index,
-                    'content' => $chunkText,
-                    'embedding_json' => json_encode($embedding),
-                    'token_count' => $this->estimateTokens($chunkText),
-                ]);
-            }
-
-            DB::commit();
-
+            $this->chunkCount = $document->chunks()->count();
             $this->processingTime = round(microtime(true) - $startTime, 2);
             $this->success = true;
             $this->dispatch('document-ingested', documentId: $document->id);
@@ -99,58 +77,10 @@ class IngestDocument extends Component
             $this->reset(['title', 'content', 'file']);
 
         } catch (\Exception $e) {
-            DB::rollBack();
             $this->error = 'Processing failed: '.$e->getMessage();
         } finally {
             $this->processing = false;
         }
-    }
-
-    protected function createChunks($text)
-    {
-        $chunks = [];
-        $words = preg_split('/\s+/', $text);
-        $currentChunk = [];
-        $currentLength = 0;
-
-        foreach ($words as $word) {
-            $wordLength = strlen($word) + 1; // +1 for space
-
-            if ($currentLength + $wordLength > $this->chunkSize && ! empty($currentChunk)) {
-                // Save current chunk
-                $chunks[] = implode(' ', $currentChunk);
-
-                // Start new chunk with overlap
-                $overlapWords = [];
-                $overlapLength = 0;
-                for ($i = count($currentChunk) - 1; $i >= 0; $i--) {
-                    $overlapWordLength = strlen($currentChunk[$i]) + 1;
-                    if ($overlapLength + $overlapWordLength > $this->overlapSize) {
-                        break;
-                    }
-                    array_unshift($overlapWords, $currentChunk[$i]);
-                    $overlapLength += $overlapWordLength;
-                }
-
-                $currentChunk = $overlapWords;
-                $currentLength = $overlapLength;
-            }
-
-            $currentChunk[] = $word;
-            $currentLength += $wordLength;
-        }
-
-        if (! empty($currentChunk)) {
-            $chunks[] = implode(' ', $currentChunk);
-        }
-
-        return $chunks;
-    }
-
-    protected function estimateTokens($text)
-    {
-        // Rough estimation: 1 token per 4 characters
-        return (int) ceil(strlen($text) / 4);
     }
 
     public function render()

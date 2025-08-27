@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Facades\Overpass;
+use App\Actions\Overpass\CheckHealthAction;
 use Livewire\Component;
 
 class OverpassStatusCard extends Component
@@ -23,9 +23,13 @@ class OverpassStatusCard extends Component
         $this->testing = true;
 
         try {
-            $result = Overpass::testConnection();
-            $this->status = $result;
+            $action = app(CheckHealthAction::class);
+            $this->status = $action->execute();
             $this->lastChecked = now()->format('H:i:s');
+
+            if ($this->status['success']) {
+                $this->dispatch('overpass-status-checked');
+            }
         } catch (\Exception $e) {
             $this->status = [
                 'success' => false,
