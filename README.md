@@ -13,7 +13,7 @@ A sophisticated document question-answering application built with Laravel, Live
 - **Linear-Inspired UI**: Beautiful dark theme with refined typography and spacing
 - **Real-time Status**: Monitor AI service connections and health
 
-## 🛠 Tech Stacks
+## 🛠 Tech Stack
 
 - **Backend**: Laravel 12, PHP 8.4
 - **Frontend**: Livewire 3, Tailwind CSS 4
