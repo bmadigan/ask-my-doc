@@ -14,6 +14,7 @@ A sophisticated document question-answering application built with Laravel, Live
 - **Real-time Status**: Monitor AI service connections and health
 
 ## 🛠 Tech Stack
+test
 
 - **Backend**: Laravel 12, PHP 8.4
 - **Frontend**: Livewire 3, Tailwind CSS 4
