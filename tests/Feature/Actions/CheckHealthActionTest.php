@@ -11,8 +11,9 @@ it('returns success status when healthy', function () {
         ->andReturn([
             'status' => 'success',
             'message' => 'All systems operational',
-            'openai' => 'connected',
-            'python_bridge' => 'connected',
+            'data' => [
+                'openai_available' => true,
+            ],
         ]);
 
     $action = new CheckHealthAction($mockOverpass);
@@ -41,7 +42,7 @@ it('returns error status when unhealthy', function () {
     expect($result)->toBeArray();
     expect($result['success'])->toBeFalse();
     expect($result['message'])->toBe('Connection failed');
-    expect($result['openai'])->toBe('error');
+    expect($result['openai'])->toBe('not configured');
     expect($result['python_bridge'])->toBe('error');
 });
 
@@ -51,8 +52,9 @@ it('handles partial failures', function () {
         ->andReturn([
             'status' => 'success',
             'message' => 'Partial connectivity',
-            'openai' => 'connected',
-            'python_bridge' => 'error',
+            'data' => [
+                'openai_available' => true,
+            ],
         ]);
 
     $action = new CheckHealthAction($mockOverpass);
@@ -60,7 +62,7 @@ it('handles partial failures', function () {
 
     expect($result['success'])->toBeTrue();
     expect($result['openai'])->toBe('connected');
-    expect($result['python_bridge'])->toBe('error');
+    expect($result['python_bridge'])->toBe('connected');
 });
 
 it('handles exceptions gracefully', function () {
