@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Actions\Document\IngestDocumentAction;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -58,15 +61,15 @@ class IngestDocument extends Component
         $startTime = microtime(true);
 
         try {
-            $action = app(IngestDocumentAction::class);
+            $overpass = app(PythonAiBridge::class);
 
-            $document = $action->execute([
+            $document = IngestDocumentAction::run([
                 'title' => $this->title,
                 'content' => $this->content,
                 'original_filename' => $this->file ? $this->file->getClientOriginalName() : null,
                 'chunk_size' => $this->chunkSize,
                 'overlap_size' => $this->overlapSize,
-            ]);
+            ], $overpass);
 
             $this->chunkCount = $document->chunks()->count();
             $this->processingTime = round(microtime(true) - $startTime, 2);

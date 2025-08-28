@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,14 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Chunk extends Model
 {
-    protected $fillable = [
-        'document_id',
-        'chunk_index',
-        'content',
-        'embedding_json',
-        'token_count',
-    ];
-
     protected $casts = [
         'chunk_index' => 'integer',
         'token_count' => 'integer',

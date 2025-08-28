@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Overpass;
 
 use Bmadigan\Overpass\Services\PythonAiBridge;
@@ -7,21 +9,14 @@ use Exception;
 
 class CheckHealthAction
 {
-    protected PythonAiBridge $overpass;
-
-    public function __construct(PythonAiBridge $overpass)
-    {
-        $this->overpass = $overpass;
-    }
-
-    public function execute(): array
+    public static function run(PythonAiBridge $overpass): array
     {
         try {
-            $result = $this->overpass->testConnection();
+            $result = $overpass->testConnection();
 
             // Check OpenAI availability from the data array
             $openaiAvailable = isset($result['data']['openai_available']) && $result['data']['openai_available'];
-            
+
             // Transform the result to match expected format
             return [
                 'success' => $result['status'] !== 'error',

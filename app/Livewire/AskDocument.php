@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Actions\Query\AskQuestionAction;
 use App\Models\Document;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Livewire\Component;
 
 class AskDocument extends Component
@@ -52,14 +55,14 @@ class AskDocument extends Component
         $this->showSources = false;
 
         try {
-            $action = app(AskQuestionAction::class);
+            $overpass = app(PythonAiBridge::class);
 
-            $result = $action->execute([
+            $result = AskQuestionAction::run([
                 'document_id' => $this->documentId,
                 'question' => $this->question,
                 'top_k' => $this->topK,
                 'min_score' => $this->minScore,
-            ]);
+            ], $overpass);
 
             if (isset($result['error'])) {
                 $this->error = $result['error'];

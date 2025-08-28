@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Document;
 
 use App\Models\Chunk;
@@ -9,16 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class IngestDocumentAction
 {
-    protected PythonAiBridge $overpass;
-
-    public function __construct(PythonAiBridge $overpass)
+    public static function run(array $data, PythonAiBridge $overpass): Document
     {
-        $this->overpass = $overpass;
-    }
-
-    public function execute(array $data): Document
-    {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data, $overpass) {
             // Create the document
             $document = Document::create([
                 'title' => $data['title'],
@@ -27,7 +22,7 @@ class IngestDocumentAction
             ]);
 
             // Chunk the content
-            $chunks = $this->chunkContent(
+            $chunks = self::chunkContent(
                 $data['content'],
                 $data['chunk_size'] ?? 1000,
                 $data['overlap_size'] ?? 200
@@ -35,7 +30,7 @@ class IngestDocumentAction
 
             // Generate embeddings and save chunks
             foreach ($chunks as $index => $chunkContent) {
-                $embeddingResult = $this->overpass->generateEmbedding($chunkContent);
+                $embeddingResult = $overpass->generateEmbedding($chunkContent);
                 $embedding = $embeddingResult['embedding'];
 
                 Chunk::create([
@@ -43,7 +38,7 @@ class IngestDocumentAction
                     'chunk_index' => $index,
                     'content' => $chunkContent,
                     'embedding_json' => json_encode($embedding),
-                    'token_count' => $this->estimateTokenCount($chunkContent),
+                    'token_count' => self::estimateTokenCount($chunkContent),
                 ]);
             }
 
@@ -51,7 +46,7 @@ class IngestDocumentAction
         });
     }
 
-    protected function chunkContent(string $content, int $chunkSize, int $overlapSize): array
+    protected static function chunkContent(string $content, int $chunkSize, int $overlapSize): array
     {
         $chunks = [];
         $contentLength = strlen($content);
@@ -94,7 +89,7 @@ class IngestDocumentAction
         return $chunks;
     }
 
-    protected function estimateTokenCount(string $text): int
+    protected static function estimateTokenCount(string $text): int
     {
         // Rough estimation: ~1 token per 4 characters
         return (int) ceil(strlen($text) / 4);

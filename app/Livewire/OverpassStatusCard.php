@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Actions\Overpass\CheckHealthAction;
+use Bmadigan\Overpass\Services\PythonAiBridge;
 use Livewire\Component;
 
 class OverpassStatusCard extends Component
@@ -23,8 +26,8 @@ class OverpassStatusCard extends Component
         $this->testing = true;
 
         try {
-            $action = app(CheckHealthAction::class);
-            $this->status = $action->execute();
+            $overpass = app(PythonAiBridge::class);
+            $this->status = CheckHealthAction::run($overpass);
             $this->lastChecked = now()->format('H:i:s');
 
             if ($this->status['success']) {

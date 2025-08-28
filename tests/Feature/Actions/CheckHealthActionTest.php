@@ -16,8 +16,7 @@ it('returns success status when healthy', function () {
             ],
         ]);
 
-    $action = new CheckHealthAction($mockOverpass);
-    $result = $action->execute();
+    $result = CheckHealthAction::run($mockOverpass);
 
     expect($result)->toBeArray();
     expect($result['success'])->toBeTrue();
@@ -36,8 +35,7 @@ it('returns error status when unhealthy', function () {
             'python_bridge' => 'error',
         ]);
 
-    $action = new CheckHealthAction($mockOverpass);
-    $result = $action->execute();
+    $result = CheckHealthAction::run($mockOverpass);
 
     expect($result)->toBeArray();
     expect($result['success'])->toBeFalse();
@@ -57,8 +55,7 @@ it('handles partial failures', function () {
             ],
         ]);
 
-    $action = new CheckHealthAction($mockOverpass);
-    $result = $action->execute();
+    $result = CheckHealthAction::run($mockOverpass);
 
     expect($result['success'])->toBeTrue();
     expect($result['openai'])->toBe('connected');
@@ -70,8 +67,7 @@ it('handles exceptions gracefully', function () {
     $mockOverpass->shouldReceive('testConnection')
         ->andThrow(new Exception('Service unavailable'));
 
-    $action = new CheckHealthAction($mockOverpass);
-    $result = $action->execute();
+    $result = CheckHealthAction::run($mockOverpass);
 
     expect($result)->toBeArray();
     expect($result['success'])->toBeFalse();
@@ -91,8 +87,7 @@ it('includes all required keys in response', function () {
             'python_bridge' => 'connected',
         ]);
 
-    $action = new CheckHealthAction($mockOverpass);
-    $result = $action->execute();
+    $result = CheckHealthAction::run($mockOverpass);
 
     expect($result)->toHaveKeys(['success', 'message', 'openai', 'python_bridge']);
 });
@@ -107,8 +102,7 @@ it('preserves additional status information', function () {
             'python_bridge' => 'connected',
         ]);
 
-    $action = new CheckHealthAction($mockOverpass);
-    $result = $action->execute();
+    $result = CheckHealthAction::run($mockOverpass);
 
     // CheckHealthAction only returns the standard keys
     expect($result)->toHaveKeys(['success', 'message', 'openai', 'python_bridge']);

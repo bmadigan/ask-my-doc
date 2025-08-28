@@ -54,14 +54,12 @@ it('asks a question and returns an answer', function () {
             'fallback' => false,
         ]);
 
-    $action = new AskQuestionAction($mockOverpass);
-
-    $result = $action->execute([
+    $result = AskQuestionAction::run([
         'document_id' => $this->document->id,
         'question' => 'What is Laravel?',
         'top_k' => 5,
         'min_score' => 0.5,
-    ]);
+    ], $mockOverpass);
 
     expect($result)->toHaveKeys(['answer', 'relevant_chunks', 'query']);
     expect($result['answer'])->toContain('Laravel');
@@ -76,14 +74,13 @@ it('handles documents with no chunks', function () {
     ]);
 
     $mockOverpass = mock(PythonAiBridge::class);
-    $action = new AskQuestionAction($mockOverpass);
 
-    expect(fn () => $action->execute([
+    expect(fn () => AskQuestionAction::run([
         'document_id' => $emptyDoc->id,
         'question' => 'Test question',
         'top_k' => 5,
         'min_score' => 0.5,
-    ]))->toThrow(Exception::class, 'Document has no chunks available');
+    ], $mockOverpass))->toThrow(Exception::class, 'Document has no chunks available');
 });
 
 it('returns error when no relevant chunks found', function () {
@@ -100,14 +97,12 @@ it('returns error when no relevant chunks found', function () {
     // No chat should be called when no relevant chunks
     $mockOverpass->shouldNotReceive('chat');
 
-    $action = new AskQuestionAction($mockOverpass);
-
-    $result = $action->execute([
+    $result = AskQuestionAction::run([
         'document_id' => $this->document->id,
         'question' => 'Unrelated question',
         'top_k' => 5,
         'min_score' => 0.5,
-    ]);
+    ], $mockOverpass);
 
     expect($result['answer'])->toBeNull();
     expect($result['relevant_chunks'])->toBeEmpty();
@@ -133,14 +128,12 @@ it('filters chunks by minimum score', function () {
             'fallback' => false,
         ]);
 
-    $action = new AskQuestionAction($mockOverpass);
-
-    $result = $action->execute([
+    $result = AskQuestionAction::run([
         'document_id' => $this->document->id,
         'question' => 'Test question',
         'top_k' => 5,
         'min_score' => 0.99, // Very high threshold to filter out chunks
-    ]);
+    ], $mockOverpass);
 
     // With such a high threshold, no chunks should pass
     if (empty($result['relevant_chunks'])) {
@@ -183,18 +176,12 @@ it('respects top_k limit', function () {
             'fallback' => false,
         ]);
 
-    $action = new AskQuestionAction($mockOverpass);
-
-    $result = $action->execute([
+    $result = AskQuestionAction::run([
         'document_id' => $this->document->id,
         'question' => 'Test question',
         'top_k' => 3,
         'min_score' => 0.5,
-    ]);
+    ], $mockOverpass);
 
     expect($result['relevant_chunks'])->toHaveCount(3);
 });
-
-
-
-

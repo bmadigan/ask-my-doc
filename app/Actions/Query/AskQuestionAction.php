@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Query;
 
 use App\Models\Chunk;
@@ -10,14 +12,7 @@ use Illuminate\Support\Collection;
 
 class AskQuestionAction
 {
-    protected PythonAiBridge $overpass;
-
-    public function __construct(PythonAiBridge $overpass)
-    {
-        $this->overpass = $overpass;
-    }
-
-    public function execute(array $data): array
+    public static function run(array $data, PythonAiBridge $overpass): array
     {
         $startTime = microtime(true);
 
@@ -35,7 +30,7 @@ class AskQuestionAction
             $searchResults = [];
         } else {
             // Generate embedding for the question
-            $embeddingResult = $this->overpass->generateEmbedding($data['question']);
+            $embeddingResult = $overpass->generateEmbedding($data['question']);
             $questionEmbedding = $embeddingResult['embedding'];
 
             // Calculate similarity scores for each chunk
@@ -44,7 +39,7 @@ class AskQuestionAction
                 $chunkEmbedding = json_decode($chunk->embedding_json, true);
                 if ($chunkEmbedding) {
                     // Simple dot product similarity
-                    $score = $this->cosineSimilarity($questionEmbedding, $chunkEmbedding);
+                    $score = self::cosineSimilarity($questionEmbedding, $chunkEmbedding);
                     if ($score >= ($data['min_score'] ?? 0.5)) {
                         $searchResults[] = [
                             'chunk_id' => $chunk->id,
@@ -60,7 +55,7 @@ class AskQuestionAction
         }
 
         // Get chunks from search results
-        $relevantChunks = $this->getRelevantChunks($searchResults, $data['min_score'] ?? 0.5);
+        $relevantChunks = self::getRelevantChunks($searchResults, $data['min_score'] ?? 0.5);
 
         if ($relevantChunks->isEmpty()) {
             return [
@@ -72,7 +67,7 @@ class AskQuestionAction
         }
 
         // Generate answer using GPT
-        $answer = $this->generateAnswer($data['question'], $relevantChunks);
+        $answer = self::generateAnswer($data['question'], $relevantChunks, $overpass);
 
         // Log the query
         $latencyMs = (int) ((microtime(true) - $startTime) * 1000);
@@ -97,7 +92,7 @@ class AskQuestionAction
         ];
     }
 
-    protected function getRelevantChunks(array $searchResults, float $minScore): Collection
+    protected static function getRelevantChunks(array $searchResults, float $minScore): Collection
     {
         if (empty($searchResults)) {
             return collect();
@@ -123,7 +118,7 @@ class AskQuestionAction
         })->sortByDesc('score');
     }
 
-    protected function generateAnswer(string $question, Collection $chunks): string
+    protected static function generateAnswer(string $question, Collection $chunks, PythonAiBridge $overpass): string
     {
         // Prepare context from chunks
         $context = $chunks->map(function ($chunk, $index) {
@@ -151,12 +146,12 @@ class AskQuestionAction
             'messages' => $messages,
             'session_id' => uniqid('query_'),
         ];
-        $result = $this->overpass->chat($chatData);
+        $result = $overpass->chat($chatData);
 
         return $result['response'];
     }
 
-    protected function cosineSimilarity(array $vec1, array $vec2): float
+    protected static function cosineSimilarity(array $vec1, array $vec2): float
     {
         $dotProduct = 0.0;
         $norm1 = 0.0;
