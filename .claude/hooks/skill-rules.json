@@ -1,0 +1,227 @@
+{
+  "skills": {
+    "clarity": {
+      "promptTriggers": {
+        "keywords": [
+          "explain", "simplify", "confusing", "understand", "junior",
+          "beginner", "complex", "complicated", "unclear", "hard to follow"
+        ],
+        "intentPatterns": [
+          "how does.*work",
+          "can you explain",
+          "i don't understand",
+          "make.*simpler",
+          "eli5"
+        ]
+      }
+    },
+    "honesty": {
+      "promptTriggers": {
+        "keywords": [
+          "not sure", "uncertain", "verify", "correct", "accurate",
+          "fact", "true", "confirm", "is this right", "double check"
+        ],
+        "intentPatterns": [
+          "is it true",
+          "am i right",
+          "does.*actually",
+          "is this correct",
+          "verify.*works"
+        ]
+      }
+    },
+    "safety": {
+      "promptTriggers": {
+        "keywords": [
+          "dangerous", "risky", "security", "vulnerability", "harmful",
+          "unsafe", "refuse", "can't do", "shouldn't"
+        ],
+        "intentPatterns": [
+          "is this safe",
+          "could this.*harm",
+          "security risk",
+          "why won't you"
+        ]
+      }
+    },
+    "senior-mindset": {
+      "promptTriggers": {
+        "keywords": [
+          "tradeoff", "trade-off", "alternative", "edge case", "architecture",
+          "design decision", "best practice", "should i use", "pros and cons",
+          "which is better", "comparison"
+        ],
+        "intentPatterns": [
+          "which.*better",
+          "pros and cons",
+          "what if",
+          "should i use",
+          "best way",
+          "what are the tradeoffs"
+        ]
+      }
+    },
+    "laravel-feature": {
+      "promptTriggers": {
+        "keywords": [
+          "feature", "crud", "model", "migration", "factory", "policy",
+          "seeder", "controller", "resource", "tdd", "business logic"
+        ],
+        "intentPatterns": [
+          "build.*feature",
+          "create.*model",
+          "implement.*crud",
+          "add.*functionality",
+          "new.*endpoint"
+        ]
+      }
+    },
+    "laravel-api": {
+      "promptTriggers": {
+        "keywords": [
+          "api", "rest", "restful", "endpoint", "json", "resource",
+          "pagination", "sanctum", "token", "rate limit"
+        ],
+        "intentPatterns": [
+          "create.*api",
+          "build.*endpoint",
+          "api.*resource",
+          "json.*response"
+        ]
+      }
+    },
+    "livewire-form": {
+      "promptTriggers": {
+        "keywords": [
+          "form", "input", "validation", "submit", "livewire",
+          "wire:model", "flux", "field", "checkbox", "select"
+        ],
+        "intentPatterns": [
+          "create.*form",
+          "build.*form",
+          "livewire.*component",
+          "form.*validation"
+        ]
+      }
+    },
+    "laravel-quality": {
+      "promptTriggers": {
+        "keywords": [
+          "pint", "phpstan", "test", "tests", "lint", "format",
+          "quality", "check", "commit", "pr", "pull request"
+        ],
+        "intentPatterns": [
+          "run.*test",
+          "check.*quality",
+          "before.*commit",
+          "format.*code"
+        ]
+      }
+    },
+    "laravel-debug": {
+      "promptTriggers": {
+        "keywords": [
+          "debug", "error", "exception", "bug", "issue", "fix",
+          "broken", "not working", "failing", "crash"
+        ],
+        "intentPatterns": [
+          "why.*not.*work",
+          "fix.*error",
+          "debug.*issue",
+          "troubleshoot"
+        ]
+      }
+    },
+    "laravel-eloquent": {
+      "promptTriggers": {
+        "keywords": [
+          "eloquent", "relationship", "query", "scope", "accessor",
+          "mutator", "cast", "n+1", "eager load"
+        ],
+        "intentPatterns": [
+          "eloquent.*query",
+          "relationship.*model",
+          "optimize.*query"
+        ]
+      }
+    },
+    "skill-creator": {
+      "promptTriggers": {
+        "keywords": [
+          "create skill", "new skill", "build skill", "skill template"
+        ],
+        "intentPatterns": [
+          "create.*skill",
+          "new.*skill",
+          "build.*skill"
+        ]
+      }
+    },
+    "xlsx": {
+      "promptTriggers": {
+        "keywords": [
+          "excel", "xlsx", "spreadsheet", "workbook", "worksheet",
+          "cell", "openpyxl", "pandas"
+        ],
+        "intentPatterns": [
+          "create.*excel",
+          "generate.*xlsx",
+          "excel.*report"
+        ]
+      }
+    },
+    "data-analyst": {
+      "promptTriggers": {
+        "keywords": [
+          "analyze", "analysis", "data", "metrics", "statistics",
+          "chart", "visualization", "report", "trend"
+        ],
+        "intentPatterns": [
+          "analyze.*data",
+          "create.*report",
+          "generate.*chart"
+        ]
+      }
+    },
+    "prd-creator": {
+      "promptTriggers": {
+        "keywords": [
+          "prd", "product requirements", "requirements document",
+          "user story", "user stories", "acceptance criteria",
+          "feature spec", "specification", "stakeholder", "roadmap",
+          "product spec", "functional requirements"
+        ],
+        "intentPatterns": [
+          "create.*prd",
+          "write.*prd",
+          "product.*requirements",
+          "requirements.*document",
+          "user.*stories",
+          "acceptance.*criteria",
+          "feature.*specification",
+          "plan.*feature"
+        ]
+      }
+    },
+    "shadcn-ui": {
+      "promptTriggers": {
+        "keywords": [
+          "react", "component", "shadcn", "landing page", "auth page",
+          "login page", "register page", "public page", "inertia",
+          "card", "button", "dialog", "form", "input", "select",
+          "dropdown", "modal", "toast", "alert", "badge"
+        ],
+        "intentPatterns": [
+          "create.*page",
+          "build.*component",
+          "react.*component",
+          "landing.*page",
+          "auth.*page",
+          "public.*interface",
+          "shadcn.*component"
+        ]
+      }
+    }
+  }
+}
+
