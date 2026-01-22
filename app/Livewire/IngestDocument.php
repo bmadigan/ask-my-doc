@@ -13,25 +13,25 @@ class IngestDocument extends Component
 {
     use WithFileUploads;
 
-    public $title = '';
+    public string $title = '';
 
-    public $content = '';
+    public string $content = '';
 
-    public $file = null;
+    public mixed $file = null;
 
-    public $chunkSize = 1000;
+    public int $chunkSize = 1000;
 
-    public $overlapSize = 200;
+    public int $overlapSize = 200;
 
-    public $processing = false;
+    public bool $processing = false;
 
-    public $chunkCount = 0;
+    public int $chunkCount = 0;
 
-    public $processingTime = 0;
+    public float $processingTime = 0;
 
-    public $error = null;
+    public ?string $error = null;
 
-    public $success = false;
+    public bool $success = false;
 
     protected $rules = [
         'title' => 'required|min:3',
@@ -39,19 +39,19 @@ class IngestDocument extends Component
         'file' => 'nullable|file|mimes:txt,md|max:10240',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->reset();
     }
 
-    public function updatedFile()
+    public function updatedFile(): void
     {
         if ($this->file) {
             $this->content = file_get_contents($this->file->getRealPath());
         }
     }
 
-    public function process()
+    public function process(): void
     {
         $this->validate();
         $this->processing = true;
@@ -86,7 +86,7 @@ class IngestDocument extends Component
         }
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.ingest-document');
     }

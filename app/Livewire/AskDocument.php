@@ -7,29 +7,30 @@ namespace App\Livewire;
 use App\Actions\Query\AskQuestionAction;
 use App\Models\Document;
 use Bmadigan\Overpass\Services\PythonAiBridge;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AskDocument extends Component
 {
-    public $documentId = null;
+    public ?int $documentId = null;
 
-    public $question = '';
+    public string $question = '';
 
-    public $topK = 5;
+    public int $topK = 5;
 
-    public $minScore = 0.2;
+    public float $minScore = 0.2;
 
-    public $answer = '';
+    public string $answer = '';
 
-    public $sources = [];
+    public array $sources = [];
 
-    public $processing = false;
+    public bool $processing = false;
 
-    public $error = null;
+    public ?string $error = null;
 
-    public $latency = 0;
+    public int $latency = 0;
 
-    public $showSources = false;
+    public bool $showSources = false;
 
     protected $rules = [
         'documentId' => 'required|exists:documents,id',
@@ -38,14 +39,13 @@ class AskDocument extends Component
         'minScore' => 'required|numeric|min:0|max:1',
     ];
 
-    protected $listeners = ['document-ingested' => 'setDocument'];
-
-    public function setDocument($documentId)
+    #[On('document-ingested')]
+    public function setDocument(int $documentId): void
     {
         $this->documentId = $documentId;
     }
 
-    public function ask()
+    public function ask(): void
     {
         $this->validate();
         $this->processing = true;
@@ -91,12 +91,12 @@ class AskDocument extends Component
         }
     }
 
-    public function toggleSources()
+    public function toggleSources(): void
     {
         $this->showSources = ! $this->showSources;
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $documents = Document::orderBy('created_at', 'desc')->get();
 

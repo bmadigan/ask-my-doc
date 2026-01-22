@@ -158,12 +158,17 @@ public function processUsers(array $data): Collection
 - Eloquent relationships with explicit return types
 - Form Requests for validation (not inline validation)
 
-### Livewire
+### Livewire v4
 - Class-based components only (NOT Volt)
+- `#[On('event')]` attribute for event listeners (NOT `$listeners` property)
 - `#[Computed]` attribute for derived properties
+- `#[Locked]` for properties that shouldn't be modified from frontend
+- `#[Renderless]` for methods that don't need re-render
 - `wire:model.blur` for standard inputs (not `.live`)
 - `wire:key` required in loops with unique identifiers
+- Typed properties with explicit return types on all methods
 - Prevent N+1 queries with eager loading
+- New directives: `wire:sort`, `wire:intersect`, `wire:ref`
 
 ### Flux UI
 - Search Flux documentation before creating custom components

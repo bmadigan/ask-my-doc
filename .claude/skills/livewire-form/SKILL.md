@@ -1,12 +1,12 @@
 ---
 name: livewire-form
-description: Create production-ready class-based Livewire forms with validation, loading states, error handling, and Flux UI components (light mode only). Use this for data entry, user input, and CRUD operations.
+description: Create production-ready class-based Livewire v4 forms with validation, loading states, error handling, and Flux UI components (light mode only). Use this for data entry, user input, and CRUD operations.
 allowed-tools: Bash,Read,Write,Edit,Glob,Grep
 ---
 
-# Livewire Form Builder
+# Livewire v4 Form Builder
 
-Build elegant, validated class-based Livewire forms using Flux UI Pro components and Laravel best practices.
+Build elegant, validated class-based Livewire v4 forms using Flux UI Pro components and Laravel best practices.
 
 ## Pre-Flight Checklist
 
@@ -37,20 +37,28 @@ Build elegant, validated class-based Livewire forms using Flux UI Pro components
 php artisan make:livewire [Feature/FormName] --test --pest --no-interaction
 ```
 
-### 2. Build Component Class
+### 2. Build Component Class (Livewire v4)
 
 ```php
 namespace App\Livewire\Features;
 
 use App\Models\Post;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PostForm extends Component
 {
+    // Typed public properties (Livewire v4 best practice)
     public string $title = '';
     public string $content = '';
     public ?int $categoryId = null;
     public bool $published = false;
+
+    // Use #[Locked] for properties that shouldn't be modified from frontend
+    #[Locked]
+    public ?int $postId = null;
 
     public function rules(): array
     {
@@ -70,6 +78,20 @@ class PostForm extends Component
         ];
     }
 
+    // Use #[On('event')] instead of $listeners property
+    #[On('category-selected')]
+    public function setCategory(int $categoryId): void
+    {
+        $this->categoryId = $categoryId;
+    }
+
+    // Use #[Computed] for derived properties (cached until dependencies change)
+    #[Computed]
+    public function categories(): \Illuminate\Support\Collection
+    {
+        return Category::orderBy('name')->get();
+    }
+
     public function save(): void
     {
         $validated = $this->validate();
@@ -86,7 +108,7 @@ class PostForm extends Component
         $this->redirect(route('posts.index'));
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.features.post-form');
     }
@@ -365,9 +387,31 @@ See `references/flux-components.md` for detailed examples.
 - ✅ Light mode only (no dark mode support)
 - ✅ Code formatted with Pint
 
+## Livewire v4 Attributes
+
+| Attribute | Purpose |
+|-----------|---------|
+| `#[On('event')]` | Listen for events (replaces `$listeners` property) |
+| `#[Computed]` | Cache derived property until dependencies change |
+| `#[Locked]` | Prevent property modification from frontend |
+| `#[Renderless]` | Skip re-rendering after method call |
+| `#[Validate]` | Inline validation on property |
+
+### New v4 Directives
+
+| Directive | Purpose |
+|-----------|---------|
+| `wire:sort` | Drag-and-drop sorting |
+| `wire:intersect` | Trigger action when element enters viewport |
+| `wire:ref` | Element reference for JavaScript interaction |
+| `.renderless` modifier | Skip re-rendering for specific action |
+| `.preserve-scroll` modifier | Maintain scroll position |
+
 ## Important Reminders
 
 - **ALWAYS** use class-based Livewire components (NOT Volt)
+- **ALWAYS** use `#[On('event')]` attribute for event listeners (NOT `$listeners` property)
+- **ALWAYS** use typed properties with explicit return types on all methods
 - **ALWAYS** use `wire:model.blur` for standard inputs (better UX than `.live`)
 - **ALWAYS** add loading states to submit buttons
 - **ALWAYS** use `wire:key` in dynamic field loops
@@ -377,4 +421,5 @@ See `references/flux-components.md` for detailed examples.
 - **NEVER** customize Flux UI component colors, typography, or borders (only padding/margins)
 - **NEVER** trust client-side validation alone
 - **NEVER** use Volt (use class-based Livewire)
+- **NEVER** use `protected $listeners` (use `#[On]` attribute instead)
 - **SEARCH** Flux documentation before creating custom components

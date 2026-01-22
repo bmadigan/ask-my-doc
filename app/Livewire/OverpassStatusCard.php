@@ -10,18 +10,18 @@ use Livewire\Component;
 
 class OverpassStatusCard extends Component
 {
-    public $status = null;
+    public ?array $status = null;
 
-    public $testing = false;
+    public bool $testing = false;
 
-    public $lastChecked = null;
+    public ?string $lastChecked = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->checkStatus();
     }
 
-    public function checkStatus()
+    public function checkStatus(): void
     {
         $this->testing = true;
 
@@ -43,7 +43,7 @@ class OverpassStatusCard extends Component
         }
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.overpass-status-card');
     }
