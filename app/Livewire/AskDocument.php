@@ -108,6 +108,12 @@ class AskDocument extends Component
         return Document::orderBy('created_at', 'desc')->get();
     }
 
+    public function askSampleQuestion(string $question): void
+    {
+        $this->question = $question;
+        $this->ask();
+    }
+
     public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.ask-document');
