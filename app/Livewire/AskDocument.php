@@ -7,6 +7,9 @@ namespace App\Livewire;
 use App\Actions\Query\AskQuestionAction;
 use App\Models\Document;
 use Bmadigan\Overpass\Services\PythonAiBridge;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -24,6 +27,7 @@ class AskDocument extends Component
 
     public array $sources = [];
 
+    #[Locked]
     public bool $processing = false;
 
     public ?string $error = null;
@@ -32,12 +36,15 @@ class AskDocument extends Component
 
     public bool $showSources = false;
 
-    protected $rules = [
-        'documentId' => 'required|exists:documents,id',
-        'question' => 'required|min:5',
-        'topK' => 'required|integer|min:1|max:10',
-        'minScore' => 'required|numeric|min:0|max:1',
-    ];
+    public function rules(): array
+    {
+        return [
+            'documentId' => 'required|exists:documents,id',
+            'question' => 'required|min:5',
+            'topK' => 'required|integer|min:1|max:10',
+            'minScore' => 'required|numeric|min:0|max:1',
+        ];
+    }
 
     #[On('document-ingested')]
     public function setDocument(int $documentId): void
@@ -96,12 +103,14 @@ class AskDocument extends Component
         $this->showSources = ! $this->showSources;
     }
 
+    #[Computed]
+    public function documents(): Collection
+    {
+        return Document::orderBy('created_at', 'desc')->get();
+    }
+
     public function render(): \Illuminate\Contracts\View\View
     {
-        $documents = Document::orderBy('created_at', 'desc')->get();
-
-        return view('livewire.ask-document', [
-            'documents' => $documents,
-        ]);
+        return view('livewire.ask-document');
     }
 }

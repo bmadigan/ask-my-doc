@@ -8,10 +8,10 @@
                 <label for="title" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
                     Document Title
                 </label>
-                <input 
-                    type="text" 
-                    id="title" 
-                    wire:model="title"
+                <input
+                    type="text"
+                    id="title"
+                    wire:model.blur="title"
                     class="w-full linear-input" 
                     style="padding: 0.75rem 1rem; font-size: 14px;"
                     placeholder="Enter document title"
@@ -27,9 +27,9 @@
                 <label for="content" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
                     Document Content
                 </label>
-                <textarea 
-                    id="content" 
-                    wire:model="content"
+                <textarea
+                    id="content"
+                    wire:model.blur="content"
                     rows="10"
                     class="w-full linear-input" 
                     style="padding: 0.75rem 1rem; font-size: 14px; min-height: 240px; resize: vertical;"
@@ -67,10 +67,10 @@
                     <label for="chunkSize" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
                         Chunk Size (characters)
                     </label>
-                    <input 
-                        type="number" 
-                        id="chunkSize" 
-                        wire:model="chunkSize"
+                    <input
+                        type="number"
+                        id="chunkSize"
+                        wire:model.blur="chunkSize"
                         min="500"
                         max="2000"
                         class="w-full linear-input" 
@@ -82,10 +82,10 @@
                     <label for="overlapSize" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
                         Overlap Size (characters)
                     </label>
-                    <input 
-                        type="number" 
-                        id="overlapSize" 
-                        wire:model="overlapSize"
+                    <input
+                        type="number"
+                        id="overlapSize"
+                        wire:model.blur="overlapSize"
                         min="0"
                         max="500"
                         class="w-full linear-input" 

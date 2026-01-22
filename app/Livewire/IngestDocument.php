@@ -6,6 +6,7 @@ namespace App\Livewire;
 
 use App\Actions\Document\IngestDocumentAction;
 use Bmadigan\Overpass\Services\PythonAiBridge;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -23,6 +24,7 @@ class IngestDocument extends Component
 
     public int $overlapSize = 200;
 
+    #[Locked]
     public bool $processing = false;
 
     public int $chunkCount = 0;
@@ -33,11 +35,14 @@ class IngestDocument extends Component
 
     public bool $success = false;
 
-    protected $rules = [
-        'title' => 'required|min:3',
-        'content' => 'required_without:file|min:10',
-        'file' => 'nullable|file|mimes:txt,md|max:10240',
-    ];
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|min:3',
+            'content' => 'required_without:file|min:10',
+            'file' => 'nullable|file|mimes:txt,md|max:10240',
+        ];
+    }
 
     public function mount(): void
     {

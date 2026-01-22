@@ -16,7 +16,7 @@
                     :disabled="$wire.processing"
                 >
                     <option value="">Choose a document...</option>
-                    @foreach($documents as $document)
+                    @foreach($this->documents as $document)
                         <option value="{{ $document->id }}">
                             {{ $document->title }} ({{ $document->chunks_count ?? $document->chunks->count() }} chunks)
                         </option>
@@ -32,9 +32,9 @@
                 <label for="question" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
                     Your Question
                 </label>
-                <textarea 
-                    id="question" 
-                    wire:model="question"
+                <textarea
+                    id="question"
+                    wire:model.blur="question"
                     rows="3"
                     class="w-full linear-input" 
                     style="padding: 0.75rem 1rem; font-size: 14px; min-height: 80px; resize: vertical;"
@@ -138,7 +138,7 @@
                     @if ($showSources)
                         <div class="space-y-3">
                             @foreach ($sources as $source)
-                                <div class="rounded-lg p-4" style="background: var(--linear-bg-primary); border: 1px solid var(--linear-border);">
+                                <div wire:key="source-{{ $source['index'] }}" class="rounded-lg p-4" style="background: var(--linear-bg-primary); border: 1px solid var(--linear-border);">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-sm font-semibold" style="color: var(--linear-text-primary);">
                                             [{{ $source['index'] }}] Chunk

@@ -6,12 +6,14 @@ namespace App\Livewire;
 
 use App\Actions\Overpass\CheckHealthAction;
 use Bmadigan\Overpass\Services\PythonAiBridge;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class OverpassStatusCard extends Component
 {
     public ?array $status = null;
 
+    #[Locked]
     public bool $testing = false;
 
     public ?string $lastChecked = null;
