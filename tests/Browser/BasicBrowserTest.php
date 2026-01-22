@@ -13,8 +13,8 @@ it('can access and navigate all pages', function () {
 
     // Test ask page
     $this->visit('/ask')
-        ->assertSee('Ask Document')
-        ->assertSee('Select Document');
+        ->assertSee('Ask a Question')
+        ->assertSee('Searching across');
 });
 
 it('validates ingest form', function () {
@@ -26,8 +26,6 @@ it('validates ingest form', function () {
 
 it('shows ask form elements', function () {
     $this->visit('/ask')
-        ->assertSee('Ask Document')
-        ->assertSee('Select Document')
-        ->assertSee('Your Question')
-        ->assertSee('Top K Results');
+        ->assertSee('Ask a Question')
+        ->assertSee('Searching across');
 });

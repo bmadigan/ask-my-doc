@@ -19,5 +19,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Seed sample documents for RAG Q&A demo
+        // Requires OpenAI API key to generate embeddings
+        $this->call(SampleDocumentSeeder::class);
     }
 }

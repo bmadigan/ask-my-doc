@@ -30,7 +30,7 @@ it('can access the ask page', function () {
 
     $response->assertStatus(200)
         ->assertSee('Ask Questions')
-        ->assertSee('Select Document');
+        ->assertSee('Ask a Question');
 });
 
 it('can create documents in database', function () {

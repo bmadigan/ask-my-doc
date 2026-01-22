@@ -16,15 +16,22 @@ class AskQuestionAction
     {
         $startTime = microtime(true);
 
-        // Validate document exists and has chunks
-        $document = Document::findOrFail($data['document_id']);
-        if ($document->chunks()->count() === 0) {
-            throw new \Exception('Document has no chunks available for searching');
+        // Determine search scope: specific document or all documents
+        $document = null;
+        if (isset($data['document_id'])) {
+            // Single document search (legacy mode)
+            $document = Document::findOrFail($data['document_id']);
+            if ($document->chunks()->count() === 0) {
+                throw new \Exception('Document has no chunks available for searching');
+            }
+            $chunks = Chunk::where('document_id', $data['document_id'])->get();
+        } else {
+            // Cross-document search (search all documents)
+            $chunks = Chunk::with('document')->get();
+            if ($chunks->isEmpty()) {
+                throw new \Exception('No documents have been ingested yet');
+            }
         }
-
-        // For simplicity, we'll do a direct database query with scoring
-        // In production, this would use the Python bridge for vector similarity
-        $chunks = Chunk::where('document_id', $data['document_id'])->get();
 
         if ($chunks->isEmpty()) {
             $searchResults = [];
@@ -72,7 +79,7 @@ class AskQuestionAction
         // Log the query
         $latencyMs = (int) ((microtime(true) - $startTime) * 1000);
         $query = Query::create([
-            'document_id' => $document->id,
+            'document_id' => $document?->id,
             'question' => $data['question'],
             'top_k_returned' => $relevantChunks->count(),
             'latency_ms' => $latencyMs,
@@ -86,6 +93,8 @@ class AskQuestionAction
                     'content' => $chunk->content,
                     'score' => $chunk->score,
                     'score_percentage' => round($chunk->score * 100, 2),
+                    'document_id' => $chunk->document_id,
+                    'document_title' => $chunk->document?->title ?? 'Unknown',
                 ];
             })->toArray(),
             'query' => $query,
@@ -107,8 +116,8 @@ class AskQuestionAction
             return collect();
         }
 
-        // Fetch chunks from database
-        $chunks = Chunk::whereIn('id', $chunkData->keys())->get();
+        // Fetch chunks from database with document relationship
+        $chunks = Chunk::with('document')->whereIn('id', $chunkData->keys())->get();
 
         // Attach scores to chunks
         return $chunks->map(function ($chunk) use ($chunkData) {

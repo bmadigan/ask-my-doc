@@ -13,8 +13,8 @@ it('can access all main pages', function () {
 
     // Visit ask page
     $this->visit('/ask')
-        ->assertSee('Ask Document')
-        ->assertSee('Select Document');
+        ->assertSee('Ask a Question')
+        ->assertSee('Searching across');
 });
 
 it('shows the dashboard with proper elements', function () {
@@ -35,13 +35,10 @@ it('shows the ingest page with form elements', function () {
         ->assertSee('Chunk & Embed');
 });
 
-it('shows the ask page with document selection', function () {
+it('shows the ask page with simplified UI', function () {
     $this->visit('/ask')
-        ->assertSee('Ask Document')
-        ->assertSee('Select Document')
-        ->assertSee('Your Question')
-        ->assertSee('Top K Results')
-        ->assertSee('Min Similarity Score');
+        ->assertSee('Ask a Question')
+        ->assertSee('Searching across');
 });
 
 it('can navigate between pages', function () {
@@ -55,7 +52,7 @@ it('can navigate between pages', function () {
 
     // Navigate to ask page
     $this->visit('/ask')
-        ->assertSee('Ask Document');
+        ->assertSee('Ask a Question');
 
     // Return to dashboard
     $this->visit('/')

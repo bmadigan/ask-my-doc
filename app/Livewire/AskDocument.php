@@ -19,9 +19,10 @@ class AskDocument extends Component
 
     public string $question = '';
 
-    public int $topK = 5;
+    // Hidden settings with sensible defaults
+    protected int $topK = 5;
 
-    public float $minScore = 0.2;
+    protected float $minScore = 0.3;
 
     public string $answer = '';
 
@@ -39,10 +40,7 @@ class AskDocument extends Component
     public function rules(): array
     {
         return [
-            'documentId' => 'required|exists:documents,id',
             'question' => 'required|min:5',
-            'topK' => 'required|integer|min:1|max:10',
-            'minScore' => 'required|numeric|min:0|max:1',
         ];
     }
 
@@ -64,8 +62,8 @@ class AskDocument extends Component
         try {
             $overpass = app(PythonAiBridge::class);
 
+            // Search across all documents (no document_id = cross-document search)
             $result = AskQuestionAction::run([
-                'document_id' => $this->documentId,
                 'question' => $this->question,
                 'top_k' => $this->topK,
                 'min_score' => $this->minScore,
@@ -84,6 +82,7 @@ class AskDocument extends Component
                     'content' => $chunk['content'],
                     'score' => $chunk['score'],
                     'preview' => substr($chunk['content'], 0, 200).(strlen($chunk['content']) > 200 ? '...' : ''),
+                    'document_title' => $chunk['document_title'] ?? 'Unknown',
                 ];
             })->toArray();
 

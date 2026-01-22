@@ -1,93 +1,34 @@
 <div class="max-w-4xl mx-auto p-8">
     <div class="linear-card" style="background: var(--linear-bg-secondary); border: 1px solid var(--linear-border); border-radius: 12px; padding: 2rem;">
-        <h2 class="text-2xl font-semibold mb-8" style="color: var(--linear-text-primary); letter-spacing: -0.02em;">Ask Document</h2>
+        <h2 class="text-2xl font-semibold mb-2" style="color: var(--linear-text-primary); letter-spacing: -0.02em;">Ask a Question</h2>
+        <p class="text-sm mb-6" style="color: var(--linear-text-tertiary);">
+            Searching across {{ $this->documents->count() }} documents
+        </p>
 
         <form wire:submit="ask" class="space-y-6">
-            {{-- Document Selector --}}
-            <div>
-                <label for="documentId" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
-                    Select Document
-                </label>
-                <select 
-                    id="documentId" 
-                    wire:model="documentId"
-                    class="w-full linear-input" 
-                    style="padding: 0.75rem 1rem; font-size: 14px; cursor: pointer;"
-                    :disabled="$wire.processing"
-                >
-                    <option value="">Choose a document...</option>
-                    @foreach($this->documents as $document)
-                        <option value="{{ $document->id }}">
-                            {{ $document->title }} ({{ $document->chunks_count ?? $document->chunks->count() }} chunks)
-                        </option>
-                    @endforeach
-                </select>
-                @error('documentId') 
-                    <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-
             {{-- Question Input --}}
             <div>
-                <label for="question" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
-                    Your Question
-                </label>
                 <textarea
                     id="question"
                     wire:model.blur="question"
                     rows="3"
-                    class="w-full linear-input" 
-                    style="padding: 0.75rem 1rem; font-size: 14px; min-height: 80px; resize: vertical;"
-                    placeholder="Ask a question about the document..."
+                    class="w-full linear-input"
+                    style="padding: 0.75rem 1rem; font-size: 14px; min-height: 100px; resize: vertical;"
+                    placeholder="What would you like to know?"
                     :disabled="$wire.processing"
                 ></textarea>
-                @error('question') 
+                @error('question')
                     <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
                 @enderror
             </div>
 
-            {{-- Advanced Settings --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="topK" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
-                        Top K Results
-                    </label>
-                    <input 
-                        type="range" 
-                        id="topK" 
-                        wire:model.live="topK"
-                        min="1"
-                        max="10"
-                        class="w-full"
-                        :disabled="$wire.processing"
-                    >
-                    <div class="text-center text-sm" style="color: var(--linear-text-tertiary); margin-top: 0.5rem;">{{ $topK }}</div>
-                </div>
-                <div>
-                    <label for="minScore" class="block text-sm font-medium mb-2" style="color: var(--linear-text-secondary);">
-                        Min Similarity Score
-                    </label>
-                    <input 
-                        type="range" 
-                        id="minScore" 
-                        wire:model.live="minScore"
-                        min="0"
-                        max="1"
-                        step="0.1"
-                        class="w-full"
-                        :disabled="$wire.processing"
-                    >
-                    <div class="text-center text-sm" style="color: var(--linear-text-tertiary); margin-top: 0.5rem;">{{ $minScore }}</div>
-                </div>
-            </div>
-
             {{-- Submit Button --}}
             <div>
-                <button 
-                    type="submit" 
-                    class="linear-button-primary flex items-center gap-2" 
+                <button
+                    type="submit"
+                    class="linear-button-primary flex items-center gap-2"
                     style="padding: 0.625rem 1.25rem; font-size: 14px; font-weight: 500; background: var(--linear-accent-green);"
-                    :disabled="$wire.processing || !$wire.documentId"
+                    :disabled="$wire.processing"
                 >
                     <span wire:loading.remove wire:target="ask">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +42,7 @@
                         </svg>
                     </span>
                     <span wire:loading.remove wire:target="ask">Ask</span>
-                    <span wire:loading wire:target="ask">Processing...</span>
+                    <span wire:loading wire:target="ask">Searching...</span>
                 </button>
             </div>
         </form>
@@ -123,9 +64,9 @@
 
                 {{-- Sources Toggle --}}
                 @if (count($sources) > 0)
-                    <button 
+                    <button
                         wire:click="toggleSources"
-                        class="text-sm font-medium flex items-center gap-1" 
+                        class="text-sm font-medium flex items-center gap-1"
                         style="color: var(--linear-accent-blue); cursor: pointer;"
                     >
                         <svg class="w-4 h-4 transition-transform duration-200 {{ $showSources ? 'rotate-90' : '' }}" fill="currentColor" viewBox="0 0 20 20">
@@ -133,7 +74,7 @@
                         </svg>
                         View Sources ({{ count($sources) }})
                     </button>
-                    
+
                     {{-- Sources List --}}
                     @if ($showSources)
                         <div class="space-y-3">
@@ -141,10 +82,10 @@
                                 <div wire:key="source-{{ $source['index'] }}" class="rounded-lg p-4" style="background: var(--linear-bg-primary); border: 1px solid var(--linear-border);">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-sm font-semibold" style="color: var(--linear-text-primary);">
-                                            [{{ $source['index'] }}] Chunk
+                                            [{{ $source['index'] }}] {{ $source['document_title'] }}
                                         </span>
                                         <span class="text-xs" style="color: var(--linear-text-tertiary);">
-                                            Score: {{ $source['score'] }}
+                                            {{ number_format($source['score'] * 100, 0) }}% match
                                         </span>
                                     </div>
                                     <p class="text-sm" style="color: var(--linear-text-secondary); line-height: 1.5;">
@@ -155,6 +96,16 @@
                         </div>
                     @endif
                 @endif
+            </div>
+        @endif
+
+        {{-- Empty State --}}
+        @if ($this->documents->count() === 0)
+            <div class="mt-6 p-4 rounded-lg text-center" style="background: var(--linear-bg-tertiary); border: 1px solid var(--linear-border);">
+                <p style="color: var(--linear-text-secondary);">No documents have been ingested yet.</p>
+                <a href="{{ route('ingest') }}" class="text-sm font-medium mt-2 inline-block" style="color: var(--linear-accent-blue);">
+                    Ingest a document to get started →
+                </a>
             </div>
         @endif
 

@@ -16,45 +16,25 @@ it('renders the ask document component', function () {
         ->assertStatus(200);
 });
 
-it('shows documents in dropdown', function () {
+it('shows document count in header', function () {
     Document::create([
         'title' => 'Test Document',
         'bytes' => 100,
     ]);
 
     Livewire::test(AskDocument::class)
-        ->assertSee('Test Document');
-});
-
-it('validates required document selection', function () {
-    Livewire::test(AskDocument::class)
-        ->set('documentId', null)
-        ->set('question', 'What is the meaning of life?')
-        ->call('ask')
-        ->assertHasErrors(['documentId' => 'required']);
+        ->assertSee('Searching across 1 documents');
 });
 
 it('validates required question', function () {
-    $document = Document::create([
-        'title' => 'Test Document',
-        'bytes' => 100,
-    ]);
-
     Livewire::test(AskDocument::class)
-        ->set('documentId', $document->id)
         ->set('question', '')
         ->call('ask')
         ->assertHasErrors(['question' => 'required']);
 });
 
 it('validates question minimum length', function () {
-    $document = Document::create([
-        'title' => 'Test Document',
-        'bytes' => 100,
-    ]);
-
     Livewire::test(AskDocument::class)
-        ->set('documentId', $document->id)
         ->set('question', 'Hi')
         ->call('ask')
         ->assertHasErrors(['question' => 'min']);
@@ -108,8 +88,8 @@ it('successfully asks a question and displays answer', function () {
 
     app()->instance(PythonAiBridge::class, $mockOverpass);
 
+    // Cross-document search (no documentId needed)
     Livewire::test(AskDocument::class)
-        ->set('documentId', $document->id)
         ->set('question', 'What is the answer?')
         ->call('ask')
         ->assertHasNoErrors()
@@ -136,8 +116,8 @@ it('shows error when query fails', function () {
 
     app()->instance(PythonAiBridge::class, $mockOverpass);
 
+    // Cross-document search (no documentId needed)
     Livewire::test(AskDocument::class)
-        ->set('documentId', $document->id)
         ->set('question', 'What is the answer?')
         ->call('ask')
         ->assertSet('processing', false)
