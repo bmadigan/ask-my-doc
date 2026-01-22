@@ -13,6 +13,34 @@ A sophisticated document question-answering application built with Laravel, Live
 - **Linear-Inspired UI**: Beautiful dark theme with refined typography and spacing
 - **Real-time Status**: Monitor AI service connections and health
 
+## Quick Start (5 minutes)
+
+```bash
+# Clone and install
+git clone https://github.com/bmadigan/ask-my-doc.git
+cd ask-my-doc
+composer install && npm install
+
+# Configure
+cp .env.example .env
+php artisan key:generate
+
+# Add your OpenAI API key to .env
+# OPENAI_API_KEY=sk-...
+
+# Install Python dependencies
+pip3 install -r overpass-ai/requirements.txt
+
+# Setup database and build assets
+php artisan migrate
+npm run build
+
+# Start development server
+composer run dev
+
+# Visit http://localhost:8000
+```
+
 ## 🛠 Tech Stack
 
 - **Backend**: Laravel 12, PHP 8.4
@@ -163,7 +191,47 @@ php artisan test tests/Feature/ExampleTest.php
 
 # Run with filter
 php artisan test --filter=testName
+
+# Run Livewire component tests
+php artisan test tests/Feature/Livewire/
 ```
+
+## Manual QA Checklist
+
+Use this checklist after setting up locally to verify everything works.
+
+### Dashboard (/)
+- [ ] Page loads without errors
+- [ ] Overpass status card shows connection status
+- [ ] Status shows green checkmark when Python/OpenAI configured correctly
+- [ ] Navigation links work (Ingest, Ask)
+
+### Ingest Page (/ingest)
+- [ ] Form displays with Title and Content fields
+- [ ] Validation errors show for empty Title
+- [ ] Validation errors show for empty Content (when no file uploaded)
+- [ ] File upload (.txt/.md) populates Content field
+- [ ] Chunk Size and Overlap sliders work
+- [ ] "Chunk & Embed" button shows loading state during processing
+- [ ] Success message appears after processing
+- [ ] Dispatches event to update Ask page document list
+
+### Ask Page (/ask)
+- [ ] Document dropdown shows ingested documents
+- [ ] Validation error shows when no document selected
+- [ ] Validation error shows for empty/short questions
+- [ ] "Ask" button shows loading state during query
+- [ ] Answer displays with markdown formatting
+- [ ] "Show Sources" toggle reveals source chunks
+- [ ] Source chunks show relevance scores
+- [ ] Error message displays gracefully if query fails
+
+### Status Card (Dashboard)
+- [ ] Shows "Checking..." during initial load
+- [ ] Displays green status when healthy
+- [ ] Displays red/error status when unhealthy
+- [ ] "Refresh" button triggers new status check
+- [ ] OpenAI availability indicator works
 
 ## 🔧 Configuration
 
